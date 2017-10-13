@@ -90,6 +90,7 @@ void phy_lan8720_power_enable(bool enable)
 
 void phy_lan8720_init(void)
 {
+
     ESP_LOGD(TAG, "phy_lan8720_init()");
     phy_lan8720_dump_registers();
 

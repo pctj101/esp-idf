@@ -40,9 +40,9 @@ static EventGroupHandle_t wifi_event_group;
 const int CONNECTED_BIT = BIT0;
 
 /* Constants that aren't configurable in menuconfig */
-#define WEB_SERVER "example.com"
+#define WEB_SERVER "x2o.net"
 #define WEB_PORT 80
-#define WEB_URL "http://example.com/"
+#define WEB_URL "http://x2o.net/"
 
 static const char *TAG = "example";
 
@@ -90,6 +90,7 @@ static void initialise_wifi(void)
     ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK( esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
     ESP_ERROR_CHECK( esp_wifi_start() );
+    ESP_LOGI(TAG, "Setting done?");
 }
 
 static void http_get_task(void *pvParameters)
@@ -107,6 +108,7 @@ static void http_get_task(void *pvParameters)
         /* Wait for the callback to set the CONNECTED_BIT in the
            event group.
         */
+        ESP_LOGI(TAG, "Await Wifi");
         xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
                             false, true, portMAX_DELAY);
         ESP_LOGI(TAG, "Connected to AP");
