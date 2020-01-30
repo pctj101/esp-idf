@@ -19,7 +19,7 @@
 #include <esp_ota_ops.h>
 #include <esp_log.h>
 
-#define DEFAULT_OTA_BUF_SIZE 256
+#define DEFAULT_OTA_BUF_SIZE 10240
 static const char *TAG = "esp_https_ota";
 
 static void http_cleanup(esp_http_client_handle_t client)
@@ -93,6 +93,7 @@ esp_err_t esp_https_ota(const esp_http_client_config_t *config)
     }
 
     int binary_file_len = 0;
+    int skips = 0;
     while (1) {
         int data_read = esp_http_client_read(client, upgrade_data_buf, alloc_size);
         if (data_read == 0) {
@@ -110,6 +111,11 @@ esp_err_t esp_https_ota(const esp_http_client_config_t *config)
             }
             binary_file_len += data_read;
             ESP_LOGD(TAG, "Written image length %d", binary_file_len);
+        }
+        skips++;
+        if (skips > 10) {
+            skips = 0;
+            ESP_LOGI(TAG, "Written image length %d", binary_file_len);
         }
     }
     free(upgrade_data_buf);
