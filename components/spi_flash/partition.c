@@ -238,7 +238,7 @@ esp_err_t esp_partition_read(const esp_partition_t* partition,
         return ESP_ERR_INVALID_SIZE;
     }
 
-    if (!partition->encrypted) {
+    if (!partition->encrypted || !esp_flash_encryption_enabled()) {
         return spi_flash_read(partition->address + src_offset, dst, size);
     } else {
         /* Encrypted partitions need to be read via a cache mapping */
@@ -268,7 +268,7 @@ esp_err_t esp_partition_write(const esp_partition_t* partition,
         return ESP_ERR_INVALID_SIZE;
     }
     dst_offset = partition->address + dst_offset;
-    if (partition->encrypted) {
+    if (partition->encrypted && esp_flash_encryption_enabled()) {
         return spi_flash_write_encrypted(dst_offset, src, size);
     } else {
         return spi_flash_write(dst_offset, src, size);
